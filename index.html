@@ -24,7 +24,7 @@
       border-radius: 20px;
       padding: 40px 30px;
       width: 100%;
-      max-width: 580px;
+      max-width: 600px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.5);
       border: 1px solid rgba(255,255,255,0.12);
     }
@@ -32,19 +32,20 @@
       text-align: center;
       color: #25D366;
       margin-bottom: 35px;
-      font-size: 2.1rem;
+      font-size: 2.2rem;
       text-shadow: 0 2px 10px rgba(37, 211, 102, 0.4);
     }
     .form-group {
-      margin-bottom: 25px;
+      margin-bottom: 28px;
     }
     label {
       display: block;
       margin-bottom: 10px;
       font-weight: 600;
       color: #d0d0d0;
+      font-size: 1.1rem;
     }
-    textarea, input {
+    textarea {
       width: 100%;
       padding: 14px 16px;
       border-radius: 12px;
@@ -53,11 +54,11 @@
       color: white;
       font-size: 1.05rem;
       resize: vertical;
-      min-height: 110px;
+      min-height: 130px;
       font-family: 'Cairo', sans-serif;
       transition: all 0.3s;
     }
-    textarea:focus, input:focus {
+    textarea:focus {
       outline: none;
       border-color: #25D366;
       box-shadow: 0 0 0 3px rgba(37,211,102,0.25);
@@ -70,7 +71,7 @@
       color: white;
       border: none;
       border-radius: 12px;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
@@ -83,12 +84,16 @@
     .btn:active {
       transform: translateY(1px);
     }
-    .info {
+    .info, .note {
       text-align: center;
       margin-top: 25px;
       font-size: 0.95rem;
-      color: #aaa;
-      line-height: 1.6;
+      color: #bbb;
+      line-height: 1.7;
+    }
+    .note {
+      color: #ffcc00;
+      font-weight: 500;
     }
     .info a {
       color: #25D366;
@@ -103,11 +108,11 @@
   <h1><i class="fab fa-whatsapp"></i> واتساب جماعي</h1>
 
   <div class="form-group">
-    <label>الأرقام (كل رقم في سطر – مع الكود الدولي بدون +):</label>
+    <label>الأرقام (كل رقم في سطر – مع الكود الدولي):</label>
     <textarea id="numbers" placeholder="201001234567
-201098765432
 201112233445
-..." required></textarea>
+201234567890
++201000000000" required></textarea>
   </div>
 
   <div class="form-group">
@@ -119,10 +124,15 @@
     <i class="fab fa-whatsapp"></i> إرسال الرسائل الآن
   </button>
 
+  <div class="note">
+    • الأرقام يفضل تكون بدون مسافات أو رموز إضافية (مثال: 201xxxxxxxxxx)<br>
+    • لو حطيت + أو "و" أو فواصل الموقع هيحاول ينظفها تلقائيًا
+  </div>
+
   <div class="info">
     سيفتح واتساب في تبويبات جديدة (واحدة لكل رقم).<br>
     اضغط "فتح الرابط" أو "إرسال" في كل تبويب.<br><br>
-    للأمان: لا تستخدم للإزعاج أو السبام — واتساب يمنع ذلك.
+    <strong>تحذير:</strong> لا تستخدم للإزعاج أو السبام — واتساب يحظر الحسابات المخالفة بسرعة.
   </div>
 </div>
 
@@ -132,37 +142,60 @@
     const message = encodeURIComponent(document.getElementById('message').value.trim());
 
     if (!numbersText || !message) {
-      alert('املأ الأرقام والرسالة من فضلك!');
+      alert('يرجى ملء حقل الأرقام وحقل الرسالة!');
       return;
     }
 
-    const numbers = numbersText.split('\n')
-      .map(n => n.trim())
-      .filter(n => n.length > 8 && !isNaN(n.replace(/\D/g,'')));
+    // تنظيف الأرقام بشكل أقوى
+    let numbers = numbersText.split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 5 && /\d/.test(line)) // سطور تحتوي أرقام فقط
+      .map(num => {
+        // إزالة كل شيء غير رقم
+        let clean = num.replace(/[^0-9]/g, '');
+        
+        // تصحيح الأرقام المصرية (10 أو 11 رقم) → إضافة 20 لو مش موجود
+        if (clean.length === 10) {
+          clean = '20' + clean;
+        } else if (clean.length === 11 && clean.startsWith('0')) {
+          clean = '20' + clean.substring(1);
+        } else if (clean.length === 12 && clean.startsWith('20')) {
+          // تمام
+        } else if (clean.length > 12) {
+          // لو أطول، نفترض إنه صحيح (ممكن دول أخرى)
+        } else {
+          return null; // رقم غير صالح
+        }
+
+        // إضافة + في البداية لو مش موجود
+        if (!clean.startsWith('+')) {
+          clean = '+' + clean;
+        }
+
+        return clean;
+      })
+      .filter(num => num !== null && num.length >= 12); // تصفية الأرقام الصالحة فقط
 
     if (numbers.length === 0) {
-      alert('ما فيش أرقام صحيحة!');
+      alert('لم يتم العثور على أرقام صالحة!\n\nمثال صحيح:\n201001234567\n201112233445');
       return;
     }
 
     if (numbers.length > 30) {
-      if (!confirm(`هتبعت لـ ${numbers.length} رقم؟ المتصفح ممكن يحجب كام تبويب. موافق؟`)) {
+      if (!confirm(`ستفتح ${numbers.length} تبويب. المتصفح قد يمنع بعضها إذا كانت كثيرة جدًا.\nهل تريد المتابعة؟`)) {
         return;
       }
     }
 
     numbers.forEach((num, i) => {
-      let cleanNum = num.replace(/\D/g, ''); // إزالة أي حروف أو رموز
-      if (!cleanNum.startsWith('20')) cleanNum = '20' + cleanNum; // افتراض مصر لو مش مكتوب
-
-      const url = `https://wa.me/\( {cleanNum}?text= \){message}`;
+      const url = `https://wa.me/\( {num}?text= \){message}`;
 
       setTimeout(() => {
         window.open(url, '_blank');
-      }, i * 1800); // 1.8 ثانية بين كل تبويب عشان ما يتقفلش
+      }, i * 2200); // 2.2 ثانية بين كل تبويب لتجنب حجب المتصفح
     });
 
-    alert(`جاري فتح ${numbers.length} تبويب واتساب...\nاضغط "فتح الرابط" في كل واحد`);
+    alert(`جاري فتح ${numbers.length} تبويب واتساب...\n\n• انتظر قليلاً بين كل تبويب\n• اضغط "إرسال" في كل نافذة\n• لو الرقم لم يظهر صح، جرب كتابة الأرقام بدون + أو رموز`);
   }
 </script>
 
