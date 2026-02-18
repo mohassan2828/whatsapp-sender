@@ -1,163 +1,66 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>واتساب جماعي - إرسال رسالة لأكثر من رقم</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إرسال رسالة واتساب لأكثر من رقم</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #e0e0e0;
-      min-height: 100vh;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .container {
-      background: rgba(255,255,255,0.07);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 30px;
-      width: 100%;
-      max-width: 600px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    h1 { text-align: center; color: #25D366; margin-bottom: 25px; font-size: 2rem; }
-    label { display: block; margin-bottom: 8px; font-weight: 600; color: #ccc; }
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background: #1e2a35;
-      color: white;
-      font-size: 1rem;
-      min-height: 110px;
-      margin-bottom: 15px;
-    }
-    .btn {
-      width: 100%;
-      padding: 14px;
-      background: #25D366;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .btn:hover { background: #128C7E; }
-    .note, .info { text-align: center; margin: 15px 0; font-size: 0.95rem; color: #aaa; line-height: 1.5; }
-    .note { color: #ffcc00; }
-    #debug {
-      margin-top: 20px;
-      padding: 12px;
-      background: #0d2215;
-      border-radius: 8px;
-      color: #aaffaa;
-      font-family: monospace;
-      font-size: 0.9rem;
-      white-space: pre-wrap;
-      direction: ltr;
-      text-align: left;
-    }
-    #links-list {
-      margin-top: 25px;
-    }
-    #links-list a {
-      display: block;
-      margin: 12px 0;
-      padding: 12px;
-      background: #25D366;
-      color: white;
-      text-align: center;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    #links-list a:hover { background: #1da851; }
+    body { font-family: Arial, sans-serif; background: #111; color: white; padding: 20px; max-width: 600px; margin: auto; }
+    h1 { color: #25D366; text-align: center; }
+    textarea { width: 100%; height: 120px; margin: 10px 0; padding: 10px; background: #222; color: white; border: 1px solid #444; border-radius: 8px; }
+    button { width: 100%; padding: 15px; background: #25D366; color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; }
+    button:hover { background: #128C7E; }
+    #status { margin-top: 20px; text-align: center; color: #0f0; }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <h1><i class="fab fa-whatsapp"></i> واتساب جماعي</h1>
+  <h1>واتساب جماعي</h1>
 
   <label>الأرقام (كل رقم في سطر):</label>
   <textarea id="numbers" placeholder="201001234567
-+201112233445
-01007757917
+201112233445
 201xxxxxxxxxx"></textarea>
 
   <label>الرسالة:</label>
-  <textarea id="message" placeholder="مرحبا! عندي عرض خاص ليك..."></textarea>
+  <textarea id="message" placeholder="مرحبا! عندي عرض خاص..."></textarea>
 
-  <button class="btn" onclick="generateLinks()">إنشاء الروابط</button>
+  <button onclick="send()">إرسال الآن</button>
 
-  <div class="note">اضغط الزر فوق → هتظهر روابط جاهزة تحت → اضغط عليها واحد واحد</div>
-  <div class="info">كروم على الموبايل بيحجب الفتح التلقائي، فالحل ده أفضل وأأمن</div>
+  <div id="status"></div>
 
-  <div id="debug">Debug info will appear here...</div>
+  <script>
+    function send() {
+      const numbersText = document.getElementById('numbers').value.trim();
+      const msg = encodeURIComponent(document.getElementById('message').value.trim() || 'مرحبا');
+      const status = document.getElementById('status');
 
-  <div id="links-list"></div>
-</div>
-
-<script>
-  function generateLinks() {
-    const numbersText = document.getElementById('numbers').value.trim();
-    let message = document.getElementById('message').value.trim();
-    const debug = document.getElementById('debug');
-    const linksContainer = document.getElementById('links-list');
-
-    if (!numbersText) {
-      alert('اكتب رقم واحد على الأقل في حقل الأرقام');
-      return;
-    }
-
-    if (!message) message = 'مرحبا!';
-
-    const msgEncoded = encodeURIComponent(message);
-
-    // تنظيف الأرقام
-    const lines = numbersText.split('\n');
-    const numbers = [];
-
-    lines.forEach(line => {
-      let cleaned = line.replace(/[^0-9]/g, '');
-      if (cleaned.length === 10) cleaned = '20' + cleaned;
-      if (cleaned.length === 11 && cleaned.startsWith('0')) cleaned = '20' + cleaned.substring(1);
-      if (cleaned.length >= 10 && cleaned.startsWith('2') || cleaned.length > 11) {
-        numbers.push(cleaned);
+      if (!numbersText) {
+        status.innerHTML = 'اكتب رقم واحد على الأقل';
+        status.style.color = 'red';
+        return;
       }
-    });
 
-    // عرض debug
-    let debugText = `عدد الأرقام الصالحة: ${numbers.length}\n\n`;
-    debugText += numbers.join('\n') || 'ما فيش أرقام صالحة';
-    debugText += '\n\nمثال رابط واحد:\n';
-    debugText += numbers[0] ? `https://wa.me/\( {numbers[0]}?text= \){msgEncoded.substring(0,40)}...` : 'لا يوجد';
-    debug.innerHTML = debugText;
+      const numbers = numbersText.split('\n').map(n => n.trim()).filter(n => n);
 
-    // عرض الروابط كأزرار
-    linksContainer.innerHTML = '';
-    if (numbers.length > 0) {
-      let html = '<p style="color:#ccc; margin-bottom:10px; text-align:center;">اضغط على كل رابط عشان تفتح الدردشة:</p>';
+      status.innerHTML = 'جاري فتح الروابط... اضغط "فتح الرابط" في كل تبويب';
+
       numbers.forEach((num, i) => {
-        const url = `https://wa.me/\( {num}?text= \){msgEncoded}`;
-        html += `<a href="${url}" target="_blank">رقم ${i+1}: ${num}</a>`;
-      });
-      linksContainer.innerHTML = html;
-    } else {
-      linksContainer.innerHTML = '<p style="color:#ff7777; text-align:center;">ما فيش أرقام صالحة بعد التنظيف</p>';
-    }
-  }
-</script>
+        let cleanNum = num.replace(/[^0-9]/g, '');
+        if (cleanNum.startsWith('0') && cleanNum.length === 11) cleanNum = '20' + cleanNum.slice(1);
+        else if (cleanNum.length === 10) cleanNum = '20' + cleanNum;
 
+        const url = `https://wa.me/\( {cleanNum}?text= \){msg}`;
+
+        setTimeout(() => {
+          window.open(url, '_blank');
+        }, i * 2000);
+      });
+    }
+  </script>
+
+  <p style="text-align:center; margin-top:30px; color:#aaa; font-size:14px;">
+    استخدم بحذر – واتساب يحظر الحسابات اللي بتبعت كتير<br>
+    أفضل طريقة: احفظ الأرقام أولاً
+  </p>
 </body>
 </html>
