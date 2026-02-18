@@ -8,8 +8,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: #e0e0e0; min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
-    .container { background: rgba(255,255,255,0.07); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px 30px; width: 100%; max-width: 600px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
     h1 { text-align: center; color: #25D366; margin-bottom: 35px; font-size: 2.2rem; text-shadow: 0 2px 10px rgba(37,211,102,0.4); }
     .form-group { margin-bottom: 28px; }
     label { display: block; margin-bottom: 10px; font-weight: 600; color: #d0d0d0; font-size: 1.1rem; }
@@ -19,7 +37,7 @@
     .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(37,211,102,0.5); }
     .note, .info { text-align: center; margin-top: 25px; font-size: 0.95rem; color: #bbb; line-height: 1.7; }
     .note { color: #ffcc00; font-weight: 500; }
-    .debug { margin-top: 20px; padding: 12px; background: rgba(0,255,0,0.1); border-radius: 8px; font-size: 0.9rem; color: #ddffdd; direction: ltr; text-align: left; white-space: pre-wrap; }
+    .debug { margin-top: 20px; padding: 12px; background: rgba(0,255,0,0.15); border-radius: 8px; font-size: 0.9rem; color: #e0ffe0; direction: ltr; text-align: left; white-space: pre-wrap; font-family: monospace; }
   </style>
 </head>
 <body>
@@ -31,29 +49,30 @@
     <label>الأرقام (كل رقم في سطر):</label>
     <textarea id="numbers" placeholder="201001234567
 +201112233445
-01001234567" required></textarea>
+01001234567
+201xxxxxxxxxx" required></textarea>
   </div>
 
   <div class="form-group">
-    <label>الرسالة:</label>
-    <textarea id="message" placeholder="مرحبا! ده عرض خاص..." required></textarea>
+    <label>الرسالة التي تريد إرسالها:</label>
+    <textarea id="message" placeholder="مرحبا! عندي عرض خاص ليك..." required></textarea>
   </div>
 
   <button class="btn" onclick="sendMessages()">
-    <i class="fab fa-whatsapp"></i> إرسال الآن
+    <i class="fab fa-whatsapp"></i> إرسال الرسائل الآن
   </button>
 
   <div class="note">
-    • الأفضل: اكتب الأرقام بدون + أو مسافات (مثال: 201xxxxxxxxxx)<br>
-    • الموقع هيزيل الـ + لو موجود
+    • الأفضل: اكتب الأرقام بدون + أو مسافات أو رموز (مثال: 201xxxxxxxxxx)<br>
+    • الموقع هيزيل الـ + وأي رموز تلقائيًا
   </div>
 
   <div class="info">
-    اضغط "إرسال" في كل تبويب يفتح.<br>
-    لو التبويبات مش بتفتح: شغّل Pop-ups في المتصفح (Settings → Privacy → Pop-ups → Allow للموقع).
+    • التبويبات هتفتح واحدة واحدة – اضغط "إرسال" في كل تبويب.<br>
+    • لو التبويبات مش بتفتح: روح Settings → Privacy → Pop-ups → Allow للموقع (san2828.github.io)
   </div>
 
-  <div id="debug" class="debug">Debug info will appear here...</div>
+  <div id="debug" class="debug">Debug info will appear here after sending...</div>
 </div>
 
 <script>
@@ -63,41 +82,50 @@
     const debugDiv = document.getElementById('debug');
 
     if (!numbersText || !message) {
-      alert('املأ الأرقام والرسالة!');
+      alert('املأ الأرقام والرسالة من فضلك!');
       return;
     }
 
-    let numbers = numbersText.split(/[\n,و+|]/)
+    // تنظيف الأرقام: نزيل كل غير أرقام، ونضبط التنسيق بدون +
+    let numbers = numbersText.split(/[\n,؛،و+|\s-]+/)
       .map(s => s.trim())
-      .filter(s => s.length > 5 && /\d{8,}/.test(s))
+      .filter(s => s.length > 5 && /\d{7,}/.test(s))
       .map(s => {
-        let digits = s.replace(/[^0-9]/g, '');  // أرقام فقط
+        let digits = s.replace(/[^0-9]/g, ''); // أرقام فقط
         if (digits.length === 0) return null;
 
-        // تصحيح مصري
-        if (digits.length === 10) digits = '20' + digits;
-        else if (digits.length === 11 && digits.startsWith('0')) digits = '20' + digits.slice(1);
+        // تصحيح للأرقام المصرية
+        if (digits.length === 10) {
+          digits = '20' + digits; // بدون صفر أول لو كان
+        } else if (digits.length === 11 && digits.startsWith('0')) {
+          digits = '20' + digits.substring(1);
+        }
 
-        // إزالة + لو موجود في البداية
-        if (digits.startsWith('20')) {
-          // تمام، مصري
-        } else if (digits.length > 10) {
-          // دول أخرى، نفترض كود موجود
-        } else return null;
-
-        return digits;  // بدون + أبدًا
+        // لو كان في + في البداية، نزيله
+        if (digits.startsWith('20') || digits.length >= 10) {
+          return digits; // بدون + أبدًا
+        }
+        return null;
       })
       .filter(n => n && n.length >= 10);
 
-    debugDiv.innerHTML = `Found \( {numbers.length} valid numbers (without +):\n` + numbers.join('\n') + '\n\nSample URL: ' + (numbers[0] ? `https://wa.me/ \){numbers[0]}?text=${message.slice(0,30)}...` : 'No valid numbers');
+    // عرض Debug واضح
+    let debugText = `Found ${numbers.length} valid numbers (without +):\n`;
+    debugText += numbers.join('\n') || '(لا يوجد أرقام صالحة)';
+    debugText += '\n\nSample URL (should open WhatsApp with number):\n';
+    debugText += numbers[0] ? `https://wa.me/\( {numbers[0]}?text= \){message.slice(0,50)}...` : 'No valid number found';
+    debugDiv.innerHTML = debugText;
 
     if (numbers.length === 0) {
-      alert('ما لقيناش أرقام صالحة! جرب بدون + أو رموز.');
+      alert('ما لقيناش أرقام صالحة! جرب تنظف الأرقام (بدون + أو رموز إضافية).');
       return;
     }
 
-    if (numbers.length > 20 && !confirm(`هيفتح ${numbers.length} تبويب – موافق؟`)) return;
+    if (numbers.length > 20 && !confirm(`هيفتح ${numbers.length} تبويب – المتصفح ممكن يحجب بعضها. موافق تكمل؟`)) {
+      return;
+    }
 
+    // فتح الروابط
     numbers.forEach((num, i) => {
       setTimeout(() => {
         const link = document.createElement('a');
@@ -107,10 +135,10 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-      }, i * 2500);
+      }, i * 3000); // 3 ثواني بين كل واحدة عشان ما يتقفلش
     });
 
-    alert(`جاري فتح ${numbers.length} تبويب...\nشوف الـ Debug تحت – الرقم لازم يظهر بدون +`);
+    alert(`جاري محاولة فتح ${numbers.length} تبويب واتساب...\n\n• انتظر 2-3 ثواني بين كل تبويب\n• اضغط "إرسال" في كل نافذة\n• شوف الـ Debug: الرابط لازم يكون فيه الرقم صح`);
   }
 </script>
 
