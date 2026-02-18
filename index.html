@@ -3,162 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>إرسال واتساب بدون حفظ (جرب الطريقة)</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <title>مباريات اليوم – جدول ونتائج</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43);
-      color: #e0f0ff;
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
       margin: 0;
-      padding: 20px;
-      min-height: 100vh;
+      padding: 15px;
     }
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.15);
     }
     h1 {
-      color: #25D366;
+      color: #58a6ff;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
-    .warning {
-      background: #ff444433;
-      border: 1px solid #ff4444;
-      color: #ffdddd;
-      padding: 12px;
-      border-radius: 10px;
-      margin: 16px 0;
-      font-size: 0.95rem;
-      line-height: 1.5;
+    .date {
+      text-align: center;
+      color: #8b949e;
+      margin-bottom: 20px;
     }
-    label {
-      display: block;
-      margin: 16px 0 6px;
-      font-weight: 600;
-      color: #c0d0ff;
-    }
-    textarea {
-      width: 100%;
-      min-height: 110px;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background: #1a2634;
-      color: white;
-      font-size: 1rem;
-      resize: vertical;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
+    .match {
+      background: #161b22;
+      padding: 15px;
       margin: 12px 0;
-      background: linear-gradient(90deg, #25D366, #20b858);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.15rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover { background: linear-gradient(90deg, #128C7E, #25D366); }
-    #status {
-      margin-top: 16px;
-      padding: 12px;
       border-radius: 8px;
-      text-align: center;
-      font-weight: 500;
+      border: 1px solid #30363d;
     }
-    .success { background: #25D36633; color: #d0ffdd; }
-    .error   { background: #ff444433; color: #ffdddd; }
-    .info    { background: #4444ff33; color: #ddddff; }
+    .teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .time, .score {
+      color: #f78166;
+      font-size: 1.2rem;
+    }
+    .league {
+      color: #8b949e;
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+    .link {
+      margin-top: 10px;
+      display: block;
+      color: #1f6feb;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .link:hover {
+      color: #388bfd;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1><i class="fab fa-whatsapp"></i> واتساب بدون حفظ</h1>
+  <h1>مباريات اليوم</h1>
+  <div class="date">اليوم: الثلاثاء 18 فبراير 2026</div>
 
-  <div class="warning">
-    <strong>مهم جدًا:</strong><br>
-    في إصدارات واتساب الأخيرة، الدردشة ممكن ما تفتحش مباشرة إلا لو حفظت الرقم في جهات الاتصال.<br>
-    جرب حفظ الرقم أولاً لو ما اشتغلش.
+  <!-- مباريات الدوري المصري -->
+  <h2 style="color:#ff6b6b;">الدوري المصري</h2>
+  <div class="match">
+    <div class="teams">
+      <span>الأهلي</span>
+      <span class="time">8:00 م</span>
+      <span>بيراميدز</span>
+    </div>
+    <div class="league">الدوري المصري الممتاز</div>
+    <a class="link" href="https://www.youtube.com/results?search_query=الأهلي+بيراميدز+مباراة+مباشر" target="_blank">بث مباشر أو ملخص</a>
   </div>
 
-  <label>الأرقام (كل رقم في سطر):</label>
-  <textarea id="numbers" placeholder="201001234567
-+201112233445
-01007757917
-00201001234567"></textarea>
+  <!-- مباريات الدوري الإنجليزي -->
+  <h2 style="color:#00ff9d;">الدوري الإنجليزي</h2>
+  <div class="match">
+    <div class="teams">
+      <span>مانشستر يونايتد</span>
+      <span class="time">9:30 م</span>
+      <span>ليفربول</span>
+    </div>
+    <div class="league">البريميرليج</div>
+    <a class="link" href="https://www.youtube.com/results?search_query=مانشستر+يونايتد+ليفربول+مباراة+اليوم" target="_blank">بث مباشر أو ملخص</a>
+  </div>
 
-  <label>الرسالة:</label>
-  <textarea id="message" placeholder="مرحبا! عندي عرض خاص النهاردة..."></textarea>
+  <!-- أضف هنا مباريات أخرى بنفس الطريقة -->
+  <!-- مثال: -->
+  <!-- <div class="match"> ... </div> -->
 
-  <button onclick="sendMessages()">
-    <i class="fab fa-whatsapp"></i> إرسال الرسائل الآن
-  </button>
-
-  <div id="status"></div>
-
-  <p style="text-align:center; margin-top:30px; color:#aaa; font-size:0.9rem;">
-    جرب رقم واحد أولاً • استخدم بحذر • واتساب يحظر الحسابات السبام
+  <p style="text-align:center; color:#8b949e; margin-top:30px;">
+    المباريات تقريبية – تحديث يدوي يوميًا<br>
+    للحصول على بث مباشر اضغط على اللينك
   </p>
 </div>
-
-<script>
-  function sendMessages() {
-    const numbersText = document.getElementById('numbers').value.trim();
-    let message = document.getElementById('message').value.trim();
-    const status = document.getElementById('status');
-
-    if (!numbersText) {
-      status.innerHTML = 'اكتب رقم واحد على الأقل من فضلك';
-      status.className = 'error';
-      return;
-    }
-
-    if (!message) message = 'مرحبا!';
-
-    const msg = encodeURIComponent(message);
-
-    // تنظيف الأرقام
-    let numbers = numbersText.split(/\n+/).map(line => {
-      let cleaned = line.trim().replace(/[^0-9]/g, '');
-      if (cleaned.startsWith('00')) cleaned = cleaned.substring(2);
-      if (cleaned.startsWith('0') && cleaned.length === 11) cleaned = '20' + cleaned.substring(1);
-      if (cleaned.length === 10) cleaned = '20' + cleaned;
-      return cleaned;
-    }).filter(n => n.length >= 10);
-
-    if (numbers.length === 0) {
-      status.innerHTML = 'ما فيش أرقام صالحة بعد التنظيف';
-      status.className = 'error';
-      return;
-    }
-
-    status.innerHTML = `جاري محاولة فتح ${numbers.length} دردشة... اضغط "فتح الرابط" في كل نافذة`;
-    status.className = 'info';
-
-    numbers.forEach((num, index) => {
-      setTimeout(() => {
-        const url = `https://wa.me/\( {num}?text= \){msg}`;
-        window.open(url, '_blank');
-      }, index * 2800); // تأخير كبير عشان كروم ما يحجبش
-    });
-
-    setTimeout(() => {
-      status.innerHTML += '<br><br><strong>لو الدردشة ما فتحتش:</strong><br>جرب احفظ الرقم في جهات الاتصال أولاً ثم اضغط الرابط تاني.';
-      status.className = 'warning';
-    }, numbers.length * 2800 + 2000);
-  }
-</script>
 
 </body>
 </html>
