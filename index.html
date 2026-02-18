@@ -28,78 +28,24 @@
       box-shadow: 0 15px 40px rgba(0,0,0,0.5);
       border: 1px solid rgba(255,255,255,0.12);
     }
-    h1 {
-      text-align: center;
-      color: #25D366;
-      margin-bottom: 35px;
-      font-size: 2.2rem;
-      text-shadow: 0 2px 10px rgba(37, 211, 102, 0.4);
-    }
-    .form-group {
-      margin-bottom: 28px;
-    }
-    label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: 600;
-      color: #d0d0d0;
-      font-size: 1.1rem;
-    }
+    h1 { text-align: center; color: #25D366; margin-bottom: 35px; font-size: 2.2rem; text-shadow: 0 2px 10px rgba(37,211,102,0.4); }
+    .form-group { margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 600; color: #d0d0d0; font-size: 1.1rem; }
     textarea {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
-      color: white;
-      font-size: 1.05rem;
-      resize: vertical;
-      min-height: 130px;
-      font-family: 'Cairo', sans-serif;
-      transition: all 0.3s;
+      width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06); color: white; font-size: 1.05rem; resize: vertical; min-height: 130px;
+      font-family: 'Cairo', sans-serif; transition: all 0.3s;
     }
-    textarea:focus {
-      outline: none;
-      border-color: #25D366;
-      box-shadow: 0 0 0 3px rgba(37,211,102,0.25);
-      background: rgba(255,255,255,0.1);
-    }
+    textarea:focus { outline: none; border-color: #25D366; box-shadow: 0 0 0 3px rgba(37,211,102,0.25); background: rgba(255,255,255,0.1); }
     .btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(90deg, #25D366, #128C7E);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.3rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
+      width: 100%; padding: 16px; background: linear-gradient(90deg, #25D366, #128C7E); color: white; border: none;
+      border-radius: 12px; font-size: 1.3rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
       box-shadow: 0 8px 25px rgba(37,211,102,0.35);
     }
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba(37,211,102,0.5);
-    }
-    .btn:active {
-      transform: translateY(1px);
-    }
-    .info, .note {
-      text-align: center;
-      margin-top: 25px;
-      font-size: 0.95rem;
-      color: #bbb;
-      line-height: 1.7;
-    }
-    .note {
-      color: #ffcc00;
-      font-weight: 500;
-    }
-    .info a {
-      color: #25D366;
-      text-decoration: none;
-    }
-    .info a:hover { text-decoration: underline; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(37,211,102,0.5); }
+    .note, .info { text-align: center; margin-top: 25px; font-size: 0.95rem; color: #bbb; line-height: 1.7; }
+    .note { color: #ffcc00; font-weight: 500; }
+    .debug { margin-top: 20px; padding: 10px; background: rgba(255,0,0,0.1); border-radius: 8px; font-size: 0.9rem; color: #ffdddd; direction: ltr; text-align: left; }
   </style>
 </head>
 <body>
@@ -108,94 +54,88 @@
   <h1><i class="fab fa-whatsapp"></i> واتساب جماعي</h1>
 
   <div class="form-group">
-    <label>الأرقام (كل رقم في سطر – مع الكود الدولي):</label>
+    <label>الأرقام (كل رقم في سطر – نظفها قدر الإمكان):</label>
     <textarea id="numbers" placeholder="201001234567
-201112233445
-201234567890
-+201000000000" required></textarea>
++201112233445
+01001234567
++966509851859" required></textarea>
   </div>
 
   <div class="form-group">
-    <label>الرسالة التي تريد إرسالها:</label>
-    <textarea id="message" placeholder="مرحبا! عندي عرض خاص ليك النهاردة..." required></textarea>
+    <label>الرسالة:</label>
+    <textarea id="message" placeholder="مرحبا! ده عرض خاص..." required></textarea>
   </div>
 
   <button class="btn" onclick="sendMessages()">
-    <i class="fab fa-whatsapp"></i> إرسال الرسائل الآن
+    <i class="fab fa-whatsapp"></i> إرسال الآن
   </button>
 
   <div class="note">
-    • الأرقام يفضل تكون بدون مسافات أو رموز إضافية (مثال: 201xxxxxxxxxx)<br>
-    • لو حطيت + أو "و" أو فواصل الموقع هيحاول ينظفها تلقائيًا
+    • جرب الأرقام بدون مسافات/رموز/حروف (مثال: 201xxxxxxxxxx)<br>
+    • لو الرقم مش ظاهر، شوف الـ Debug تحت وقلي إيه مكتوب
   </div>
 
   <div class="info">
-    سيفتح واتساب في تبويبات جديدة (واحدة لكل رقم).<br>
-    اضغط "فتح الرابط" أو "إرسال" في كل تبويب.<br><br>
-    <strong>تحذير:</strong> لا تستخدم للإزعاج أو السبام — واتساب يحظر الحسابات المخالفة بسرعة.
+    التبويبات هتفتح واحدة واحدة – اضغط "إرسال" في كل واحدة.<br>
+    <strong>مهم:</strong> لو البوب أب بلوكر شغال، روح Settings → Privacy → Pop-ups → Allow للموقع ده.
   </div>
+
+  <div id="debug" class="debug">Debug info will appear here after click...</div>
 </div>
 
 <script>
   function sendMessages() {
     const numbersText = document.getElementById('numbers').value.trim();
     const message = encodeURIComponent(document.getElementById('message').value.trim());
+    const debugDiv = document.getElementById('debug');
 
     if (!numbersText || !message) {
-      alert('يرجى ملء حقل الأرقام وحقل الرسالة!');
+      alert('املأ الأرقام والرسالة!');
       return;
     }
 
-    // تنظيف الأرقام بشكل أقوى
-    let numbers = numbersText.split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 5 && /\d/.test(line)) // سطور تحتوي أرقام فقط
-      .map(num => {
-        // إزالة كل شيء غير رقم
-        let clean = num.replace(/[^0-9]/g, '');
-        
-        // تصحيح الأرقام المصرية (10 أو 11 رقم) → إضافة 20 لو مش موجود
-        if (clean.length === 10) {
-          clean = '20' + clean;
-        } else if (clean.length === 11 && clean.startsWith('0')) {
-          clean = '20' + clean.substring(1);
-        } else if (clean.length === 12 && clean.startsWith('20')) {
-          // تمام
-        } else if (clean.length > 12) {
-          // لو أطول، نفترض إنه صحيح (ممكن دول أخرى)
-        } else {
-          return null; // رقم غير صالح
-        }
+    // تنظيف قوي جدًا
+    let numbers = numbersText.split(/[\n,و+|]/)  // فصل على سطر جديد أو , أو و أو +
+      .map(s => s.trim())
+      .filter(s => s.length > 5 && /\d{8,}/.test(s))
+      .map(s => {
+        let digits = s.replace(/[^0-9]/g, '');  // أرقام فقط
+        if (digits.length === 0) return null;
 
-        // إضافة + في البداية لو مش موجود
-        if (!clean.startsWith('+')) {
-          clean = '+' + clean;
-        }
+        // تصحيح مصري
+        if (digits.length === 10) digits = '20' + digits;
+        else if (digits.length === 11 && digits.startsWith('0')) digits = '20' + digits.slice(1);
+        else if (!digits.startsWith('20') && digits.length > 10) {
+          // دول أخرى: نفترض كود موجود
+        } else if (digits.length < 10) return null;
 
-        return clean;
+        return digits.startsWith('+') ? digits : '+' + digits;
       })
-      .filter(num => num !== null && num.length >= 12); // تصفية الأرقام الصالحة فقط
+      .filter(n => n && n.length >= 12);
+
+    debugDiv.innerHTML = `Found \( {numbers.length} valid numbers:<br>` + numbers.join('<br>') + '<br><br>Sample URL: ' + (numbers[0] ? `https://wa.me/ \){numbers[0]}?text=${message.slice(0,30)}...` : 'No valid numbers');
 
     if (numbers.length === 0) {
-      alert('لم يتم العثور على أرقام صالحة!\n\nمثال صحيح:\n201001234567\n201112233445');
+      alert('ما لقيناش أرقام صالحة! جرب تنظفها أكتر (بدون + أو و أو مسافات كتير).');
       return;
     }
 
-    if (numbers.length > 30) {
-      if (!confirm(`ستفتح ${numbers.length} تبويب. المتصفح قد يمنع بعضها إذا كانت كثيرة جدًا.\nهل تريد المتابعة؟`)) {
-        return;
-      }
-    }
+    if (numbers.length > 20 && !confirm(`هيفتح ${numbers.length} تبويب – ممكن البلوكر يمنعهم. موافق؟`)) return;
 
+    // طريقة أفضل: نستخدم anchor بدل window.open مباشرة عشان نتجنب بلوكر أحيانًا
     numbers.forEach((num, i) => {
-      const url = `https://wa.me/\( {num}?text= \){message}`;
-
       setTimeout(() => {
-        window.open(url, '_blank');
-      }, i * 2200); // 2.2 ثانية بين كل تبويب لتجنب حجب المتصفح
+        const link = document.createElement('a');
+        link.href = `https://wa.me/\( {num}?text= \){message}`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }, i * 2500);  // 2.5 ثانية تأخير
     });
 
-    alert(`جاري فتح ${numbers.length} تبويب واتساب...\n\n• انتظر قليلاً بين كل تبويب\n• اضغط "إرسال" في كل نافذة\n• لو الرقم لم يظهر صح، جرب كتابة الأرقام بدون + أو رموز`);
+    alert(`جاري المحاولة لفتح ${numbers.length} تبويب...\n\n- لو الرقم مش ظاهر: شوف الـ Debug تحت\n- لو التبويب فاضي: شغل Pop-ups للموقع (Settings > Privacy > Pop-ups)`);
   }
 </script>
 
