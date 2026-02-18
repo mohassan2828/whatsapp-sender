@@ -1,1 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>واتساب جماعي - إرسال رسالة لأكثر من رقم</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 580px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    h1 {
+      text-align: center;
+      color: #25D366;
+      margin-bottom: 35px;
+      font-size: 2.1rem;
+      text-shadow: 0 2px 10px rgba(37, 211, 102, 0.4);
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #d0d0d0;
+    }
+    textarea, input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: white;
+      font-size: 1.05rem;
+      resize: vertical;
+      min-height: 110px;
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.3s;
+    }
+    textarea:focus, input:focus {
+      outline: none;
+      border-color: #25D366;
+      box-shadow: 0 0 0 3px rgba(37,211,102,0.25);
+      background: rgba(255,255,255,0.1);
+    }
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(90deg, #25D366, #128C7E);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 8px 25px rgba(37,211,102,0.35);
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(37,211,102,0.5);
+    }
+    .btn:active {
+      transform: translateY(1px);
+    }
+    .info {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 0.95rem;
+      color: #aaa;
+      line-height: 1.6;
+    }
+    .info a {
+      color: #25D366;
+      text-decoration: none;
+    }
+    .info a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
 
+<div class="container">
+  <h1><i class="fab fa-whatsapp"></i> واتساب جماعي</h1>
+
+  <div class="form-group">
+    <label>الأرقام (كل رقم في سطر – مع الكود الدولي بدون +):</label>
+    <textarea id="numbers" placeholder="201001234567
+201098765432
+201112233445
+..." required></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>الرسالة التي تريد إرسالها:</label>
+    <textarea id="message" placeholder="مرحبا! عندي عرض خاص ليك النهاردة..." required></textarea>
+  </div>
+
+  <button class="btn" onclick="sendMessages()">
+    <i class="fab fa-whatsapp"></i> إرسال الرسائل الآن
+  </button>
+
+  <div class="info">
+    سيفتح واتساب في تبويبات جديدة (واحدة لكل رقم).<br>
+    اضغط "فتح الرابط" أو "إرسال" في كل تبويب.<br><br>
+    للأمان: لا تستخدم للإزعاج أو السبام — واتساب يمنع ذلك.
+  </div>
+</div>
+
+<script>
+  function sendMessages() {
+    const numbersText = document.getElementById('numbers').value.trim();
+    const message = encodeURIComponent(document.getElementById('message').value.trim());
+
+    if (!numbersText || !message) {
+      alert('املأ الأرقام والرسالة من فضلك!');
+      return;
+    }
+
+    const numbers = numbersText.split('\n')
+      .map(n => n.trim())
+      .filter(n => n.length > 8 && !isNaN(n.replace(/\D/g,'')));
+
+    if (numbers.length === 0) {
+      alert('ما فيش أرقام صحيحة!');
+      return;
+    }
+
+    if (numbers.length > 30) {
+      if (!confirm(`هتبعت لـ ${numbers.length} رقم؟ المتصفح ممكن يحجب كام تبويب. موافق؟`)) {
+        return;
+      }
+    }
+
+    numbers.forEach((num, i) => {
+      let cleanNum = num.replace(/\D/g, ''); // إزالة أي حروف أو رموز
+      if (!cleanNum.startsWith('20')) cleanNum = '20' + cleanNum; // افتراض مصر لو مش مكتوب
+
+      const url = `https://wa.me/\( {cleanNum}?text= \){message}`;
+
+      setTimeout(() => {
+        window.open(url, '_blank');
+      }, i * 1800); // 1.8 ثانية بين كل تبويب عشان ما يتقفلش
+    });
+
+    alert(`جاري فتح ${numbers.length} تبويب واتساب...\nاضغط "فتح الرابط" في كل واحد`);
+  }
+</script>
+
+</body>
+</html>
